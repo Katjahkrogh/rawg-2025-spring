@@ -1,22 +1,26 @@
 import { Grid, GridItem, Show } from '@chakra-ui/react';
 import NavBar from './components/NavBar';
 import GameGrid from './components/GameGrid';
-import GenreList from './components/GenreList';
 import { useState } from 'react';
-import { Genre } from './hooks/useGenres';
+import useGenres, { Genre } from './hooks/useGenres';
 import PlatformSelector from './components/PlatformSelector';
 import { Platform } from './hooks/usePlatforms';
-import StoreList from './components/StoreList';
-import { Store } from './hooks/useStores';
+import useStores, { Store } from './hooks/useStores';
+import CustomList from './components/CustomList';
+
+export interface GameQuery {
+  genre: Genre | null;
+  platform: Platform | null;
+  store: Store | null;
+}
 
 function App() {
-  const [selectedGenre, setSelectedGenre] = useState<Genre | null>(null);
-  const [selectedPlatform, setSelectedPlatform] = useState<Platform | null>(null);
-  const [selectedStore, setSelectedStore] = useState<Store | null>(null);
+  const [gameQuery, setGameQuery] = useState<GameQuery>({} as GameQuery);
 
-  const handleOnSelectedGenre = (genre: Genre | null) => setSelectedGenre(genre);
-  const handleOnSelectedPlatform = (platform: Platform | null) => setSelectedPlatform(platform);
-  const handleOnSelectedStore = (store: Store | null) => setSelectedStore(store);
+  const handleOnSelectedGenre = (genre: Genre | null) => setGameQuery({ ...gameQuery, genre });
+  const handleOnSelectedPlatform = (platform: Platform | null) =>
+    setGameQuery({ ...gameQuery, platform });
+  const handleOnSelectedStore = (store: Store | null) => setGameQuery({ ...gameQuery, store });
 
   return (
     <Grid
@@ -30,20 +34,26 @@ function App() {
       </GridItem>
       <Show above="lg">
         <GridItem pl="2" area={'aside'}>
-          <GenreList onSelectedGenre={handleOnSelectedGenre} selectedGenre={selectedGenre} />
-          <StoreList onSelectedStore={handleOnSelectedStore} selectedStore={selectedStore} />
+          <CustomList
+            title="Genres"
+            onSelectedItem={handleOnSelectedGenre}
+            selectedItem={gameQuery.genre}
+            useDataHook={useGenres}
+          />
+          <CustomList
+            title="Stores"
+            onSelectedItem={handleOnSelectedStore}
+            selectedItem={gameQuery.store}
+            useDataHook={useStores}
+          />
         </GridItem>
       </Show>
       <GridItem pl="2" area={'main'}>
         <PlatformSelector
-          selectedPlatform={selectedPlatform}
+          selectedPlatform={gameQuery.platform}
           onSelectedPlatform={handleOnSelectedPlatform}
         />
-        <GameGrid
-          selectedGenre={selectedGenre}
-          selectedPlatform={selectedPlatform}
-          selectedStore={selectedStore}
-        />
+        <GameGrid gameQuery={gameQuery} />
       </GridItem>
     </Grid>
   );
