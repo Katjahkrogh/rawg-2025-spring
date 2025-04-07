@@ -20,9 +20,9 @@ const useGames = (gameQuery: GameQuery) =>
     queryFn: ({ pageParam = 1 }) =>
       apiClient.getAll({
         params: {
-          genres: gameQuery.genre?.slug,
-          parent_platforms: gameQuery.platform?.id,
-          stores: gameQuery.store?.id,
+          genres: gameQuery.genreId,
+          parent_platforms: gameQuery.platformId,
+          stores: gameQuery.storeId,
           ordering: gameQuery.sortOrder,
           search: gameQuery.searchText,
           page: pageParam,
@@ -34,18 +34,3 @@ const useGames = (gameQuery: GameQuery) =>
   });
 
 export default useGames;
-
-// const useGames = (gameQuery: GameQuery) =>
-//   useData<Game>(
-//     "/games",
-//     {
-//       params: {
-//         genres: gameQuery.genre?.slug,
-//         parent_platforms: gameQuery.platform?.id,
-//         stores: gameQuery.store?.id,
-//         ordering: gameQuery.sortOrder,
-//         search: gameQuery.searchText,
-//       },
-//     },
-//     [gameQuery]
-//   );
